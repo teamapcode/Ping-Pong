@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>برنامه تمرینی پینگ‌پنگ</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary: #4CAF50;
+            --primary-light: #E8F5E9;
+            --primary-dark: #2E7D32;
+            --bg-color: #f5f5f5;
+            --text-dark: #333;
+            --text-light: #666;
+            --accent: #FF9800;
+            --accent-bg: #FFF3E0;
+            --gym-color: #1976D2;
+            --gym-bg: #E3F2FD;
+            --purple-color: #7B1FA2;
+        }
+
+        * {
+            box-sizing: border-box;
+            font-family: 'Vazirmatn', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg-color);
+            color: var(--text-dark);
+            padding-bottom: 90px;
+        }
+
+        header {
+            background-color: #C8E6C9;
+            padding: 12px 15px;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background-color 0.3s;
+        }
+
+        .header-info h1 {
+            margin: 0;
+            font-size: 16px;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--primary-dark);
+        }
+
+        .header-info p {
+            margin: 4px 0 0 0;
+            font-size: 12px;
+            color: var(--text-light);
+            font-weight: 700;
+        }
+
+        /* دکمه اعتماد به نفس در هدر */
+        .confidence-btn {
+            background-color: var(--purple-color);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 8px 12px;
+            font-family: 'Vazirmatn', sans-serif;
+            font-weight: 700;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            transition: transform 0.2s;
+        }
+        .confidence-btn:active { transform: scale(0.95); }
+
+        .container {
+            padding: 15px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* کارت راهنما */
+        .tips-card {
+            background-color: #FFF8E1;
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            border-right: 4px solid var(--accent);
+        }
+
+        .tips-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 10px;
+            color: #E65100;
+        }
+
+        .tips-header h3 {
+            margin: 0;
+            font-size: 15px;
+            font-weight: 800;
+        }
+
+        .tips-card p {
+            margin: 6px 0;
+            font-size: 13px;
+            color: #4a4a4a;
+        }
+
+        /* کارت‌های تمرین */
+        .exercise-card {
+            background-color: #fff;
+            border-radius: 14px;
+            padding: 16px;
+            margin-bottom: 12px;
+            box-shadow: 0 3px 8px rgba(0,0,0,0.06);
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+            cursor: pointer;
+        }
+
+        .exercise-card.done {
+            background-color: var(--primary-light);
+            border-color: #A5D6A7;
+            box-shadow: 0 3px 10px rgba(76, 175, 80, 0.2);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+        }
+
+        /* چک‌باکس SVG */
+        .custom-checkbox {
+            width: 28px;
+            height: 28px;
+            flex-shrink: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 8px;
+            border: 2px solid #ccc;
+            background: #fff;
+            transition: all 0.2s;
+        }
+
+        .exercise-card.done .custom-checkbox {
+            background: var(--primary);
+            border-color: var(--primary);
+        }
+
+        .custom-checkbox svg {
+            width: 18px;
+            height: 18px;
+            stroke: white;
+            stroke-width: 3;
+            fill: none;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            opacity: 0;
+            transform: scale(0.5);
+            transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .exercise-card.done .custom-checkbox svg {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        .card-title {
+            font-weight: 800;
+            font-size: 15px;
+            flex-grow: 1;
+            line-height: 1.5;
+            margin-top: 3px;
+        }
+
+        .card-details {
+            margin-top: 10px;
+            padding-right: 40px;
+            font-size: 13px;
+            color: #555;
+            line-height: 1.7;
+        }
+
+        /* شمارنده */
+        .counter-badge {
+            margin-top: 12px;
+            background-color: var(--accent-bg);
+            color: var(--accent);
+            padding: 8px 12px;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .counter-badge svg {
+            width: 18px;
+            height: 18px;
+            fill: var(--accent);
+        }
+
+        /* دکمه پایان روز */
+        .next-day-btn {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            right: 20px;
+            max-width: 560px;
+            margin: 0 auto;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 16px;
+            border-radius: 14px;
+            font-size: 16px;
+            font-weight: 800;
+            box-shadow: 0 5px 15px rgba(76, 175, 80, 0.4);
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            transition: transform 0.2s, background 0.2s;
+        }
+
+        .next-day-btn:active {
+            transform: scale(0.97);
+            background-color: var(--primary-dark);
+        }
+
+        .next-day-btn svg {
+            width: 24px;
+            height: 24px;
+            stroke: white;
+            stroke-width: 2.5;
+            fill: none;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            transition: transform 0.3s;
+        }
+
+        .next-day-btn:hover svg {
+            transform: rotate(180deg);
+        }
+
+        /* افکت قرمز */
+        .red-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: rgba(244, 67, 54, 0.9);
+            z-index: 100;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            flex-direction: column;
+            gap: 15px;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .red-overlay svg {
+            width: 80px;
+            height: 80px;
+            stroke: white;
+            stroke-width: 2;
+            fill: none;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            animation: shake 0.5s ease-in-out infinite alternate;
+        }
+
+        .red-overlay span {
+            font-size: 20px;
+            font-weight: 800;
+            text-align: center;
+            padding: 0 20px;
+        }
+
+        /* --- استایل مودال (پنجره تمرین اعتماد به نفس) --- */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: rgba(0, 0, 0, 0.6);
+            z-index: 200;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            padding: 15px;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modal-content {
+            background-color: #fff;
+            border-radius: 16px;
+            width: 100%;
+            max-width: 500px;
+            max-height: 85vh;
+            overflow-y: auto;
+            padding: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            position: relative;
+            animation: slideUp 0.3s ease;
+        }
+
+        .modal-close {
+            position: sticky;
+            top: 0;
+            float: left;
+            background: #ff5252;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 32px;
+            height: 32px;
+            font-size: 18px;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 10;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        .modal-title {
+            color: var(--purple-color);
+            font-size: 18px;
+            font-weight: 800;
+            margin-top: 0;
+            margin-bottom: 15px;
+            text-align: center;
+            border-bottom: 2px dashed #E1BEE7;
+            padding-bottom: 10px;
+        }
+
+        .modal-section {
+            margin-bottom: 18px;
+        }
+
+        .modal-section h3 {
+            font-size: 14px;
+            color: #4a148c;
+            margin: 0 0 8px 0;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: #F3E5F5;
+            padding: 6px 10px;
+            border-radius: 6px;
+        }
+
+        .modal-section p {
+            margin: 5px 0;
+            font-size: 13px;
+            line-height: 1.7;
+            color: #333;
+        }
+
+        .affirmation-box {
+            background-color: #FCE4EC;
+            border-right: 4px solid #E91E63;
+            padding: 12px;
+            border-radius: 8px;
+            font-weight: 800;
+            color: #880E4F;
+            text-align: center;
+            font-size: 15px;
+            margin-top: 10px;
+        }
+
+        @keyframes shake {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(10px); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+    </style>
+</head>
+<body>
+
+    <header id="main-header">
+        <div class="header-info">
+            <h1 id="day-title"></h1>
+            <p id="day-number"></p>
+        </div>
+        <!-- دکمه اعتماد به نفس -->
+        <button class="confidence-btn" onclick="openConfidenceModal()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a7 7 0 0 0-7 7c0 2.38 1.19 4.47 3 5.74V17a2 2 0 0 0 2 2h4a2 2 0 0 0 2-2v-2.26c1.81-1.27 3-3.36 3-5.74a7 7 0 0 0-7-7z"></path><path d="M9 18h6M10 22h4"></path></svg>
+            تمرین اعتماد به نفس
+        </button>
+    </header>
+
+    <div class="container">
+        <div class="tips-card">
+            <div class="tips-header">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M9 18h6M10 22h4M12 2a7 7 0 0 0-7 7c0 2.38 1.19 4.47 3 5.74V17a2 2 0 0 0 2 2h4a2 2 0 0 0 2-2v-2.26c1.81-1.27 3-3.36 3-5.74a7 7 0 0 0-7-7z"></path>
+                </svg>
+                <h3>سه اصلاح اصلی</h3>
+            </div>
+            <p>۱) فاصله آرنج تا بدن ≈ یک مشت</p>
+            <p>۲) مچ ثابت — قدرت از کمر</p>
+            <p>۳) follow-through کامل</p>
+            <p style="margin-top: 8px; color: #d32f2f; font-weight: bold;">* در سایه، هر ست روی یک مورد تمرکز کن!</p>
+        </div>
+
+        <div id="cards-container"></div>
+    </div>
+
+    <button class="next-day-btn" onclick="goToNextDay()">
+        <svg viewBox="0 0 24 24">
+            <path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8"></path>
+            <polyline points="21 3 21 8 16 8"></polyline>
+        </svg>
+        پایان روز و رفتن به روز بعد
+    </button>
+
+    <div class="red-overlay" id="redOverlay" onclick="this.style.display='none'">
+        <svg viewBox="0 0 24 24">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="12" y1="8" x2="12" y2="12"></line>
+            <line x1="12" y1="16" x2="12.01" y2="16"></line>
+        </svg>
+        <span>هنوز کارهای انجام نشده داری!</span>
+    </div>
+
+    <!-- مودال تمرین اعتماد به نفس -->
+    <div class="modal-overlay" id="confidenceModal" onclick="if(event.target===this) closeConfidenceModal()">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeConfidenceModal()">×</button>
+            <h2 class="modal-title">🧠 تمرین اعتمادبه‌نفس</h2>
+            
+            <div class="modal-section">
+                <p><strong>📌 چه زمانی:</strong> هر روز خانه یک بار، قبل از باشگاه یک بار، بعد از هر خطای تاپ در تمرین جمله کلیدی را بلند بگو.</p>
+                <p><strong>⏱️ مدت:</strong> ۳–۴ دقیقه</p>
+            </div>
+
+            <div class="modal-section">
+                <h3>مرحله ۱ — آرام‌سازی (۱ دقیقه)</h3>
+                <p>• جایی آرام بنشین، چشم‌ها را ببند.</p>
+                <p>• ۵ نفس عمیق: دم از بینی (۴ ثانیه) ← نگه دار (۲ ثانیه) ← بازدم از دهان (۶ ثانیه).</p>
+                <p>• شانه‌ها، دست‌ها و پاها را شل کن.</p>
+            </div>
+
+            <div class="modal-section">
+                <h3>مرحله ۲ — تصویرسازی موفقیت (۱ دقیقه)</h3>
+                <p>• ۵ بار تصور کن تاپ میزنی و توپ داخل می‌رود.</p>
+                <p>• صدای برخورد توپ با میز را بشنو.</p>
+                <p>• حس برخورد راکت با توپ را حس کن.</p>
+                <p>• هر بار محکم‌تر و مطمئن‌تر تصور کن.</p>
+            </div>
+
+            <div class="modal-section">
+                <h3>مرحله ۳ — پذیرش خطا (۱ دقیقه)</h3>
+                <p>• ۳ بار تصور کن توپ بیرون می‌رود.</p>
+                <p>• به جای ترس، در ذهنت بگو: «خوب بود، جسور بودم.»</p>
+                <p>• این‌طوری مغزت یاد می‌گیرد خطا فاجعه نیست.</p>
+            </div>
+
+            <div class="modal-section">
+                <h3>مرحله ۴ — جمله تأکیدی (۱ دقیقه)</h3>
+                <p>• ۵ بار آرام و با اطمینان تکرار کن:</p>
+                <div class="affirmation-box">
+                    «من جسورم، تاپ می‌زنم،<br>خطا هم بشود ادامه می‌دهم.»
+                </div>
+                <p style="margin-top: 10px;">• چشم‌ها را باز کن، نفس عمیق بکش و برو تمرین.</p>
+            </div>
+
+            <div class="modal-section">
+                <h3>🎯 چرا این کار می‌کند؟</h3>
+                <p>ترس تو ذهنی است، نه فنی. تصویرسازی مکرر به مغزت یاد می‌دهد که تاپ‌اسپین «خطرناک» نیست و خطا «پایان دنیا» نیست. بعد از ۲–۳ هفته، در زمین واقعی هم جسورتر می‌شوی.</p>
+            </div>
+
+            <div class="modal-section">
+                <h3>📌 قانون جسارت (در تمرین با توپ)</h3>
+                <p>• در هر ست، ۳ توپ آخر را عمداً پرقدرت بزن — خطا هم شد، اشکالی ندارد.</p>
+                <p>• هر بار توپ محکم زدی و بیرون رفت، بگو: «خوب بود، جسور بودم.»</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const WeekProgram = [
+            { day: 'شنبه', type: 'gym', title: 'تمرین باشگاه', details: ['قبل از رفتن: تمرین اعتمادبه‌نفس (۳-۴ دقیقه)', 'در باشگاه: تمرین زیر نظر استاد', 'سه اشکال فنی (آرنج، مچ، دست کامل) را یادآوری کن', 'بعد از باشگاه: ۵ دقیقه کشش'] },
+            { day: 'یکشنبه', type: 'home', title: 'جلسه ۱: فورهند تاپ (سایه)', details: ['گرم‌کردن (۵ دقیقه): مچ، شانه، پا', 'سایه جلو آینه (۲۵ دقیقه): ۳ ست × ۲۰ فورهند تاپ', 'چرخش کمر ← انتقال وزن ← پایان بالا', 'بدنسازی (۵ دقیقه): اسکات ۲×۱۰ + تعادل', 'کشش (۵ دقیقه)', 'تمرین اعتمادبه‌نفس (۳-۴ دقیقه)'] },
+            { day: 'دوشنبه', type: 'gym', title: 'تمرین باشگاه', details: ['قبل از رفتن: تمرین اعتمادبه‌نفس (۳-۴ دقیقه)', 'در باشگاه: تمرین زیر نظر استاد', 'روی سه اشکال فنی تمرکز کن', 'بعد از باشگاه: ۵ دقیقه کشش'] },
+            { day: 'سه‌شنبه', type: 'home', title: 'جلسه ۲: بکهند تاپ (سایه)', details: ['گرم‌کردن (۵ دقیقه)', 'سایه (۲۵ دقیقه): ۳ ست × ۲۰ بکهند تاپ', 'محکم و با اعتمادبه‌نفس بزن', 'بدنسازی (۵ دقیقه): طناب/پرش ۲ دقیقه + کشش مچ', 'کشش (۵ دقیقه) + تمرین اعتمادبه‌نفس'] },
+            { day: 'چهارشنبه', type: 'gym', title: 'تمرین باشگاه', details: ['قبل از رفتن: تمرین اعتمادبه‌نفس (۳-۴ دقیقه)', 'در باشگاه: تمرین زیر نظر استاد', 'سه اشکال فنی را چک کن', 'بعد از باشگاه: ۵ دقیقه کشش'] },
+            { day: 'پنجشنبه', type: 'home', title: 'جلسه ۳: تاپ روی پیچ زیر (درمان ترس)', details: ['گرم‌کردن (۵ دقیقه)', 'سایه (۲۵ دقیقه): حرکت آهسته و کامل', 'مسیر: پایین ← بالا ← جلو', '۳ ست × ۲۰ فورهند + ۲ ست × ۲۰ بکهند', 'بدنسازی (۵ دقیقه): اسکات + تعادل', 'کشش (۵ دقیقه) + تمرین اعتمادبه‌نفس'] },
+            { day: 'جمعه', type: 'home', title: 'جلسه ۵: سایه آزاد + ذهنی (سبک)', details: ['گرم‌کردن (۵ دقیقه)', 'سایه آزاد (۱۵ دقیقه): با تمرکز روی جسارت', 'تمرین ذهنی (۱۰ دقیقه): تصویرسازی موفقیت', 'کشش (۵ دقیقه)', 'جمع: ۳۵ دقیقه'] }
+        ];
+
+        const Icons = {
+            home: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>`,
+            
+            // آیکون دمبل (وزنه) که خودت خواستی برگرده
+            gym: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M6.5 6.5h11v11h-11z"></path>
+                    <path d="M6 18v-2"></path><path d="M18 18v-2"></path>
+                    <path d="M6 8V6"></path><path d="M18 8V6"></path>
+                    <line x1="4" y1="12" x2="6" y2="12"></line>
+                    <line x1="18" y1="12" x2="20" y2="12"></line>
+                    <line x1="2" y1="10" x2="2" y2="14"></line>
+                    <line x1="22" y1="10" x2="22" y2="14"></line>
+                  </svg>`,
+                  
+            check: `<polyline points="20 6 9 17 4 12"></polyline>`,
+            fire: `<path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"></path>`
+        };
+
+        let currentDayIndex = 0;
+        let todayCards = [];
+
+        function init() {
+            let savedIndex = localStorage.getItem('dayIndex');
+            if (savedIndex !== null) currentDayIndex = parseInt(savedIndex);
+            generateCards();
+            renderUI();
+        }
+
+        function generateCards() {
+            todayCards = [];
+            let program = WeekProgram[currentDayIndex];
+            let mainKey = `session_${currentDayIndex}`;
+            todayCards.push({
+                key: mainKey, title: program.title, details: program.details,
+                doneToday: localStorage.getItem(`today_${mainKey}`) === 'true',
+                doneCount: parseInt(localStorage.getItem(`count_${mainKey}`) || 0)
+            });
+        }
+
+        function renderUI() {
+            let program = WeekProgram[currentDayIndex];
+            let isGym = program.type === 'gym';
+
+            let header = document.getElementById('main-header');
+            header.style.backgroundColor = isGym ? '#BBDEFB' : '#C8E6C9';
+            
+            let titleIcon = isGym ? Icons.gym : Icons.home;
+            let titleColor = isGym ? 'var(--gym-color)' : 'var(--primary-dark)';
+            
+            let titleEl = document.getElementById('day-title');
+            titleEl.innerHTML = `${titleIcon} روز ${program.day}`;
+            titleEl.style.color = titleColor;
+
+            document.getElementById('day-number').innerText = isGym ? 'تمرین باشگاه' : 'تمرین خانه';
+
+            let container = document.getElementById('cards-container');
+            container.innerHTML = '';
+
+            todayCards.forEach((card, index) => {
+                let cardDiv = document.createElement('div');
+                cardDiv.className = `exercise-card ${card.doneToday ? 'done' : ''}`;
+                cardDiv.onclick = () => toggleCard(index);
+
+                let detailsHTML = '';
+                if (card.details.length > 0) {
+                    detailsHTML = `<div class="card-details">` + card.details.map(d => `<div>• ${d}</div>`).join('') + `</div>`;
+                }
+
+                let statusText = card.doneToday ? 'انجام شد' : 'هنوز انجام نشده';
+
+                cardDiv.innerHTML = `
+                    <div class="card-header">
+                        <div class="custom-checkbox"><svg viewBox="0 0 24 24">${Icons.check}</svg></div>
+                        <div class="card-title">${card.title}</div>
+                    </div>
+                    ${detailsHTML}
+                    <div class="counter-badge" style="${isGym ? 'background-color: var(--gym-bg); color: var(--gym-color);' : ''}">
+                        <svg viewBox="0 0 24 24" style="${isGym ? 'fill: var(--gym-color);' : ''}">${Icons.fire}</svg>
+                        ${statusText} ${card.doneCount > 0 ? `(${card.doneCount} بار)` : ''}
+                    </div>
+                `;
+                container.appendChild(cardDiv);
+            });
+        }
+
+        function toggleCard(index) {
+            let card = todayCards[index];
+            card.doneToday = !card.doneToday;
+            localStorage.setItem(`today_${card.key}`, card.doneToday);
+            if (card.doneToday) {
+                playSound('tick');
+                fireConfetti();
+            }
+            renderUI();
+        }
+
+        function goToNextDay() {
+            let allDone = todayCards.every(c => c.doneToday);
+            if (!allDone) {
+                let overlay = document.getElementById('redOverlay');
+                overlay.style.display = 'flex';
+                playSound('fail');
+                setTimeout(() => { overlay.style.display = 'none'; }, 2000);
+                return; 
+            }
+
+            todayCards.forEach(card => {
+                if (card.doneToday) {
+                    localStorage.setItem(`count_${card.key}`, card.doneCount + 1);
+                    localStorage.setItem(`today_${card.key}`, false);
+                }
+            });
+
+            currentDayIndex = (currentDayIndex + 1) % 7;
+            localStorage.setItem('dayIndex', currentDayIndex);
+            
+            generateCards();
+            renderUI();
+            playSound('success');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function fireConfetti() {
+            const colors = ['#4CAF50', '#2196F3', '#F44336', '#FFEB3B', '#9C27B0', '#FF9800'];
+            for (let i = 0; i < 40; i++) {
+                let el = document.createElement('div');
+                el.style.position = 'fixed'; el.style.width = '10px'; el.style.height = '10px';
+                el.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                el.style.left = Math.random() * 100 + 'vw'; el.style.top = '-10px'; el.style.zIndex = '9999';
+                el.style.borderRadius = Math.random() > 0.5 ? '50%' : '0';
+                document.body.appendChild(el);
+                let animation = el.animate([
+                    { transform: `translateY(0) rotate(0deg)`, opacity: 1 },
+                    { transform: `translateY(100vh) rotate(${Math.random() * 720}deg)`, opacity: 0 }
+                ], { duration: Math.random() * 1500 + 1000, easing: 'cubic-bezier(0.25, 0.46, 0.45, 0.94)' });
+                animation.onfinish = () => el.remove();
+            }
+        }
+
+        function playSound(type) {
+            const AudioContext = window.AudioContext || window.webkitAudioContext;
+            if (!AudioContext) return;
+            const ctx = new AudioContext();
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.connect(gain); gain.connect(ctx.destination);
+
+            if (type === 'tick') {
+                osc.type = 'sine'; osc.frequency.setValueAtTime(600, ctx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(800, ctx.currentTime + 0.05);
+                gain.gain.setValueAtTime(0.5, ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.1);
+                osc.start(); osc.stop(ctx.currentTime + 0.1);
+            } else if (type === 'success') {
+                osc.type = 'triangle'; osc.frequency.setValueAtTime(400, ctx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(800, ctx.currentTime + 0.2);
+                gain.gain.setValueAtTime(0.3, ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.4);
+                osc.start(); osc.stop(ctx.currentTime + 0.4);
+            } else {
+                osc.type = 'sawtooth'; osc.frequency.setValueAtTime(150, ctx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(100, ctx.currentTime + 0.3);
+                gain.gain.setValueAtTime(0.3, ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.4);
+                osc.start(); osc.stop(ctx.currentTime + 0.4);
+            }
+        }
+
+        // توابع مودال
+        function openConfidenceModal() {
+            document.getElementById('confidenceModal').style.display = 'flex';
+        }
+
+        function closeConfidenceModal() {
+            document.getElementById('confidenceModal').style.display = 'none';
+        }
+
+        window.onload = init;
+    </script>
+</body>
+</html>
